@@ -30,4 +30,21 @@ export default class IconLikeService {
       throw new Error('Error posting like');
     }
   }
+
+  async removeLike(): Promise<void> {
+    try {
+      const currentLikes = await this.getNumLikes();
+      await sp.web.lists.getByTitle("IconLike").items.filter("Title eq '1'").top(1).get().then(async (items) => {
+        if (items.length > 0) {
+          const itemId = items[0].Id;
+          await sp.web.lists.getByTitle("IconLike").items.getById(itemId).update({
+            numLikes: currentLikes - 1,
+          });
+        }
+      });
+    } catch (error) {
+      throw new Error('Error removing like');
+    }
+  }
+  
 }
